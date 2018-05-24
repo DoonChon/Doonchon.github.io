@@ -8,10 +8,10 @@
 
 <head>
 	<title>Phantom by HTML5 UP</title>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-	<link rel="stylesheet" href="assets/css/main.css"/>
+	<link rel="stylesheet" href="assets/css/main.css" />
 	<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
 	<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
 </head>
@@ -58,7 +58,7 @@
 					<h1>Make and share <b>PLUGIN</b> <br/> for MC:BE server software plugin </h1>
 					<p>This web page displays a list of Blugin plugins, And link to the download page</p>
 				</header>
-				<section class="tiles">
+				<section id="tiles" class="tiles">
 				</section>
 			</div>
 		</div>
@@ -89,6 +89,66 @@
 	<script src="assets/js/util.js"></script>
 	<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
 	<script src="assets/js/main.js"></script>
+	<script>
+		var tilesElement = document.getElementById('tiles');
+		var pluginRepos = [];
+
+		var ignore
+
+		function loadRepos(name) {
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'https://api.github.com/' + name + '/repos', true);
+			xhr.setRequestHeader('Accept', 'application/vnd.github.mercy-preview+json');
+			xhr.setRequestHeader('If-Modified-Since', 'Thu, 05 Jul 2012 15:31:30 GMT');
+			xhr.responseType = 'json';
+			xhr.onload = function() {
+				if (xhr.status === 200) {
+					for (i in xhr.response) {
+						var repo = xhr.response[i];
+						for (k in repo.topics) {
+							if (repo.topics[k] == 'blugin-plugin') {
+								pluginRepos.push(repo.full_name);
+
+								// Create article the tile
+								var articleElement = document.createElement('article');
+								articleElement.classList.add('style' + (pluginRepos.length % 6 + 1));
+
+								var spanElement = document.createElement('span');
+								spanElement.classList.add('image');
+								articleElement.appendChild(spanElement);
+
+								var imgElement = document.createElement('img');
+								imgElement.style = '';
+								imgElement.src = 'https://github.com/' + repo.full_name + '/raw/master/assets/icon/index.svg?sanitize=true';
+								spanElement.appendChild(imgElement);
+
+								var ankerElement = document.createElement('a');
+								ankerElement.href = 'https://github.com/' + repo.full_name;
+								articleElement.appendChild(ankerElement);
+
+								var headerElement = document.createElement('h2');
+								headerElement.innerText = repo.name.replace('-PMMP', '');
+								ankerElement.appendChild(headerElement);
+
+								var divElement = document.createElement('div');
+								divElement.classList.add('content');
+								divElement.innerText = repo.description;
+								ankerElement.appendChild(divElement);
+
+								tilesElement.appendChild(articleElement);
+								break;
+							}
+						}
+					}
+				} else {
+					tilesElement.innerText = 'I can\'t connect to https://api.github.com/' + name + '/repos';
+				}
+			};
+			xhr.send();
+		}
+		loadRepos('orgs/Blugin');
+		loadRepos('users/PresentKim');
+	</script>
 </body>
 
 </html>
