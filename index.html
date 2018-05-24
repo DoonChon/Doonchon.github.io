@@ -96,7 +96,6 @@
 			var xhr = new XMLHttpRequest();
 			xhr.open('GET', 'https://api.github.com/' + name + '/repos', true);
 			xhr.setRequestHeader('Accept', 'application/vnd.github.mercy-preview+json');
-			xhr.setRequestHeader('If-Modified-Since', 'Thu, 05 Jul 2012 15:31:30 GMT');
 			xhr.responseType = 'json';
 			xhr.onload = function() {
 				if (xhr.status === 200) {
