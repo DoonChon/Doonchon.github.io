@@ -51,8 +51,8 @@
 		<div id="main">
 			<div class="inner">
 				<header>
-					<h1>Make and share <b>PLUGIN</b> <br/> for MC:BE server software plugin </h1>
-					<p>This web page displays a list of Blugin plugins, And link to the download page</p>
+					<h1>Make plugin for <b>MC:BE</b> server software</h1>
+					<p>This web page displays a list of Blugin plugins (<b id="plugin-count">0</b> plugins loaded)</p>
 				</header>
 				<section id="tiles" class="tiles">
 				</section>
@@ -87,6 +87,7 @@
 	<script src="assets/js/main.js"></script>
 	<script>
 		var tilesElement = document.getElementById('tiles');
+		var countElement = document.getElementById('plugin-count');
 		var pluginRepos = [];
 
 		var ignore
@@ -104,6 +105,7 @@
 						for (k in repo.topics) {
 							if (repo.topics[k] == 'blugin-plugin') {
 								pluginRepos.push(repo.full_name);
+								countElement.innerText = pluginRepos.length;
 
 								// Create article the tile
 								var articleElement = document.createElement('article');
