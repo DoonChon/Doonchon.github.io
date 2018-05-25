@@ -107,7 +107,7 @@
 				if (xhr.status === 200) {
 					console.log('Load new response of ' + name);
 
-					if(localStorage != null){
+					if (localStorage != null) {
 						localStorage.setItem(name, JSON.stringify({
 							ETag: xhr.getResponseHeader('ETag'),
 							lastResponse: xhr.response
@@ -121,7 +121,7 @@
 					tilesElement.innerText = 'I can\'t connect to https://api.github.com/' + name + '/repos';
 					return;
 				}
-				if(typeof json === 'string' || json instanceof String){
+				if (typeof json === 'string' || json instanceof String) {
 					json = JSON.parse(json);
 				}
 				for (i in json) {
