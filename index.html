@@ -93,7 +93,7 @@
 		var pluginRepos = [];
 
 		function loadRepos(name) {
-			var cache = JSON.parse(localStorage.getItem(name));
+			var cache = localStorage != null ? JSON.parse(localStorage.getItem(name)) : null;
 			var etag = cache == null ? '' : cache.ETag;
 			var lastResponse = cache == null ? '' : cache.lastResponse;
 
@@ -107,10 +107,12 @@
 				if (xhr.status === 200) {
 					console.log('Load new response of ' + name);
 
-					localStorage.setItem(name, JSON.stringify({
-						ETag: xhr.getResponseHeader('ETag'),
-						lastResponse: xhr.response
-					}));
+					if(localStorage != null){
+						localStorage.setItem(name, JSON.stringify({
+							ETag: xhr.getResponseHeader('ETag'),
+							lastResponse: xhr.response
+						}));
+					}
 					json = xhr.response;
 				} else if (xhr.status === 304) { // Not Modified
 					json = lastResponse;
