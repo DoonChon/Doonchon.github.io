@@ -89,55 +89,81 @@
 	<script>
 		var tilesElement = document.getElementById('tiles');
 		var countElement = document.getElementById('plugin-count');
+
+		function setLocalData(name, data) {
+			localStorage.setItem(name, data);
+		}
+
+		function getLocalData(name) {
+			return localStorage.getItem(name);
+		}
+
 		var pluginRepos = [];
 
 		function loadRepos(name) {
+			var cache = JSON.parse(getLocalData(name));
+			var etag = cache == null ? '' : cache.ETag;
+			var lastResponse = cache == null ? '' : cache.lastResponse;
+
 			var xhr = new XMLHttpRequest();
 			xhr.open('GET', 'https://api.github.com/' + name + '/repos', true);
 			xhr.setRequestHeader('Accept', 'application/vnd.github.mercy-preview+json');
+			xhr.setRequestHeader('If-None-Match', etag);
 			xhr.responseType = 'json';
 			xhr.onload = function() {
+				var json = [];
 				if (xhr.status === 200) {
-					for (i in xhr.response) {
-						var repo = xhr.response[i];
-						for (k in repo.topics) {
-							if (repo.topics[k] == 'blugin-plugin') {
-								pluginRepos.push(repo.full_name);
-								countElement.innerText = pluginRepos.length;
+					console.log('Load new response of ' + name);
 
-								// Create article the tile
-								var articleElement = document.createElement('article');
-								articleElement.classList.add('style' + (pluginRepos.length % 6 + 1));
-
-								var spanElement = document.createElement('span');
-								spanElement.classList.add('image');
-								articleElement.appendChild(spanElement);
-
-								var imgElement = document.createElement('img');
-								imgElement.style = '';
-								imgElement.src = 'https://github.com/' + repo.full_name + '/raw/master/assets/icon/index.svg?sanitize=true';
-								spanElement.appendChild(imgElement);
-
-								var ankerElement = document.createElement('a');
-								ankerElement.href = 'https://github.com/' + repo.full_name;
-								articleElement.appendChild(ankerElement);
-
-								var headerElement = document.createElement('h2');
-								headerElement.innerText = repo.name.replace('-PMMP', '');
-								ankerElement.appendChild(headerElement);
-
-								var divElement = document.createElement('div');
-								divElement.classList.add('content');
-								divElement.innerText = repo.description;
-								ankerElement.appendChild(divElement);
-
-								tilesElement.appendChild(articleElement);
-								break;
-							}
-						}
-					}
+					setLocalData(name, JSON.stringify({
+						ETag: xhr.getResponseHeader('ETag'),
+						lastResponse: xhr.response
+					}));
+					json = xhr.response;
+				} else if (xhr.status === 304) { // Not Modified
+					json = lastResponse;
+					console.log('Load last response of ' + name);
 				} else {
 					tilesElement.innerText = 'I can\'t connect to https://api.github.com/' + name + '/repos';
+					return;
+				}
+				for (i in json) {
+					var repo = json[i];
+					for (k in repo.topics) {
+						if (repo.topics[k] == 'blugin-plugin') {
+							pluginRepos.push(repo.full_name);
+							countElement.innerText = pluginRepos.length;
+
+							// Create article the tile
+							var articleElement = document.createElement('article');
+							articleElement.classList.add('style' + (pluginRepos.length % 6 + 1));
+
+							var spanElement = document.createElement('span');
+							spanElement.classList.add('image');
+							articleElement.appendChild(spanElement);
+
+							var imgElement = document.createElement('img');
+							imgElement.style = '';
+							imgElement.src = 'https://github.com/' + repo.full_name + '/raw/master/assets/icon/index.svg?sanitize=true';
+							spanElement.appendChild(imgElement);
+
+							var ankerElement = document.createElement('a');
+							ankerElement.href = 'https://github.com/' + repo.full_name;
+							articleElement.appendChild(ankerElement);
+
+							var headerElement = document.createElement('h2');
+							headerElement.innerText = repo.name.replace('-PMMP', '');
+							ankerElement.appendChild(headerElement);
+
+							var divElement = document.createElement('div');
+							divElement.classList.add('content');
+							divElement.innerText = repo.description;
+							ankerElement.appendChild(divElement);
+
+							tilesElement.appendChild(articleElement);
+							break;
+						}
+					}
 				}
 			};
 			xhr.send();
