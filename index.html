@@ -90,18 +90,27 @@
 		var tilesElement = document.getElementById('tiles');
 		var countElement = document.getElementById('plugin-count');
 
-		function setLocalData(name, data) {
-			localStorage.setItem(name, data);
+		function setCookie(name, value) {
+			var date = new Date();
+			date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000));
+			document.cookie = name + "=" + (value || "") + "; expires=" + date.toUTCString() + "; path=/";
 		}
 
-		function getLocalData(name) {
-			return localStorage.getItem(name);
+		function getCookie(name) {
+			var nameEQ = name + "=";
+			var ca = document.cookie.split(';');
+			for (var i = 0; i < ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+				if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+			}
+			return null;
 		}
 
 		var pluginRepos = [];
 
 		function loadRepos(name) {
-			var cache = JSON.parse(getLocalData(name));
+			var cache = JSON.parse(getCookie(name));
 			var etag = cache == null ? '' : cache.ETag;
 			var lastResponse = cache == null ? '' : cache.lastResponse;
 
@@ -115,7 +124,7 @@
 				if (xhr.status === 200) {
 					console.log('Load new response of ' + name);
 
-					setLocalData(name, JSON.stringify({
+					setCookie(name, JSON.stringify({
 						ETag: xhr.getResponseHeader('ETag'),
 						lastResponse: xhr.response
 					}));
