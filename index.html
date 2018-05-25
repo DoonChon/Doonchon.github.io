@@ -132,7 +132,7 @@
 							imgElement.src = 'https://github.com/' + repo.full_name + '/raw/master/assets/icon/index.svg?sanitize=true';
 							imgElement.repo = repo;
 							imgElement.onload = function() {
-								pluginRepos.push(this.repo.full_name);
+								pluginRepos.push(this.repo);
 								countElement.innerText = pluginRepos.length;
 
 								// Create article the tile
