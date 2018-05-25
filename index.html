@@ -121,6 +121,9 @@
 					tilesElement.innerText = 'I can\'t connect to https://api.github.com/' + name + '/repos';
 					return;
 				}
+				if(typeof json === 'string' || json instanceof String){
+					json = JSON.parse(json);
+				}
 				for (i in json) {
 					var repo = json[i];
 					for (k in repo.topics) {
