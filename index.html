@@ -90,18 +90,10 @@
 		var tilesElement = document.getElementById('tiles');
 		var countElement = document.getElementById('plugin-count');
 
-		function setLocalData(name, data) {
-			localStorage.setItem(name, data);
-		}
-
-		function getLocalData(name) {
-			return localStorage.getItem(name);
-		}
-
 		var pluginRepos = [];
 
 		function loadRepos(name) {
-			var cache = JSON.parse(getLocalData(name));
+			var cache = JSON.parse(localStorage.getItem(name));
 			var etag = cache == null ? '' : cache.ETag;
 			var lastResponse = cache == null ? '' : cache.lastResponse;
 
@@ -115,7 +107,7 @@
 				if (xhr.status === 200) {
 					console.log('Load new response of ' + name);
 
-					setLocalData(name, JSON.stringify({
+					localStorage.setItem(name, JSON.stringify({
 						ETag: xhr.getResponseHeader('ETag'),
 						lastResponse: xhr.response
 					}));
