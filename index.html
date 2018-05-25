@@ -128,36 +128,37 @@
 					var repo = json[i];
 					for (k in repo.topics) {
 						if (repo.topics[k] == 'blugin-plugin') {
-							pluginRepos.push(repo.full_name);
-							countElement.innerText = pluginRepos.length;
-
-							// Create article the tile
-							var articleElement = document.createElement('article');
-							articleElement.classList.add('style' + (pluginRepos.length % 6 + 1));
-
-							var spanElement = document.createElement('span');
-							spanElement.classList.add('image');
-							articleElement.appendChild(spanElement);
-
 							var imgElement = document.createElement('img');
-							imgElement.style = '';
 							imgElement.src = 'https://github.com/' + repo.full_name + '/raw/master/assets/icon/index.svg?sanitize=true';
-							spanElement.appendChild(imgElement);
+							imgElement.repo = repo;
+							imgElement.onload = function() {
+								pluginRepos.push(this.repo.full_name);
+								countElement.innerText = pluginRepos.length;
 
-							var ankerElement = document.createElement('a');
-							ankerElement.href = 'https://github.com/' + repo.full_name;
-							articleElement.appendChild(ankerElement);
+								// Create article the tile
+								var articleElement = document.createElement('article');
+								articleElement.classList.add('style' + (pluginRepos.length % 6 + 1));
 
-							var headerElement = document.createElement('h2');
-							headerElement.innerText = repo.name.replace('-PMMP', '');
-							ankerElement.appendChild(headerElement);
+								var spanElement = document.createElement('span');
+								spanElement.classList.add('image');
+								articleElement.appendChild(spanElement);
 
-							var divElement = document.createElement('div');
-							divElement.classList.add('content');
-							divElement.innerText = repo.description;
-							ankerElement.appendChild(divElement);
+								var ankerElement = document.createElement('a');
+								ankerElement.href = 'https://github.com/' + this.repo.full_name;
+								articleElement.appendChild(ankerElement);
 
-							tilesElement.appendChild(articleElement);
+								var headerElement = document.createElement('h2');
+								headerElement.innerText = this.repo.name.replace('-PMMP', '');
+								ankerElement.appendChild(headerElement);
+
+								var divElement = document.createElement('div');
+								divElement.classList.add('content');
+								divElement.innerText = this.repo.description;
+								ankerElement.appendChild(divElement);
+
+								spanElement.appendChild(this);
+								tilesElement.appendChild(articleElement);
+							}
 							break;
 						}
 					}
