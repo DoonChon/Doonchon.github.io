@@ -127,9 +127,9 @@
 				for (i in json) {
 					var repo = json[i];
 					for (k in repo.topics) {
-						if (repo.topics[k] == 'blugin-plugin') {
+						if (repo.topics[k] === 'blugin-plugin') {
 							var imgElement = document.createElement('img');
-							imgElement.src = 'https://github.com/' + repo.full_name + '/raw/master/assets/icon/index.svg?sanitize=true';
+							imgElement.src = "https://rawgit.com/PresentKim/SVG-files/master/plugin-icons/"+(repo.name.replace('-PMMP', '').toLowerCase())+".svg";
 							imgElement.repo = repo;
 							imgElement.onload = function() {
 								pluginRepos.push(this.repo);
