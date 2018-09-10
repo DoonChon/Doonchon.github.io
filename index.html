@@ -114,7 +114,7 @@
 						}));
 					}
 					json = xhr.response;
-				} else if (xhr.status == 304 || xhr.status == 403) { // Not Modified || Forbidden
+				} else if (xhr.status === 304 || xhr.status === 403) { // Not Modified || Forbidden
 					json = lastResponse;
 					console.log('Load last response of ' + name);
 				} else {
